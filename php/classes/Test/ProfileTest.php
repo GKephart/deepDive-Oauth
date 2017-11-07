@@ -30,4 +30,51 @@ class ProfileTest extends DeepDiveOauthTest {
 
 	$this->profileOauthToken = bin2hex(random_bytes(48));
 	}
+
+	public function testInsertValidProfile() {
+		$numRows = $this->getConnection()->getRowCount("profile");
+
+
+		$profileId = generateUuidV4();
+		$profile = new Profile($profileId, $this->profileImage, $this->profileOauthToken, $this->profileUsername);
+		$profile->insert($this->getPDO());
+
+		$pdoProfile = Profile::getProfileByProfileId($this->getPDO(), $profileId);
+		$this->assertEquals($numRows + 1, $this->getConnection()->getRowCount("tweet"));
+	$this->assertEquals($pdoProfile->getProfileId(), $profileId);
+		$this->assertEquals($pdoProfile->getProfileImage(), $profile->getProfileImage());
+		$this->assertEquals($pdoProfile->getProfileOauthToken(), $profile->getProfileOauthToken());
+		$this->assertEquals($pdoProfile->getProfileUsername(), $profile->getProfileUsername());
+	}
+
+	public function testGetProfileByOauthToken() {
+		$numRows = $this->getConnection()->getRowCount("profile");
+
+
+		$profileId = generateUuidV4();
+		$profile = new Profile($profileId, $this->profileImage, $this->profileOauthToken, $this->profileUsername);
+		$profile->insert($this->getPDO());
+
+		$pdoProfile = Profile::getProfileByProfileOauthToken($this->getPDO(), $profile->getProfileOauthToken());
+		$this->assertEquals($numRows + 1, $this->getConnection()->getRowCount("tweet"));
+		$this->assertEquals($pdoProfile->getProfileId(), $profileId);
+		$this->assertEquals($pdoProfile->getProfileImage(), $profile->getProfileImage());
+		$this->assertEquals($pdoProfile->getProfileOauthToken(), $profile->getProfileOauthToken());
+		$this->assertEquals($pdoProfile->getProfileUsername(), $profile->getProfileUsername());
+	}
+	public function testGetProfileByProfileUsername() {
+		$numRows = $this->getConnection()->getRowCount("profile");
+
+
+		$profileId = generateUuidV4();
+		$profile = new Profile($profileId, $this->profileImage, $this->profileOauthToken, $this->profileUsername);
+		$profile->insert($this->getPDO());
+
+		$pdoProfile = Profile::getProfileByProfileUsername($this->getPDO(), $profile->getProfileUsername());
+		$this->assertEquals($numRows + 1, $this->getConnection()->getRowCount("tweet"));
+		$this->assertEquals($pdoProfile->getProfileId(), $profileId);
+		$this->assertEquals($pdoProfile->getProfileImage(), $profile->getProfileImage());
+		$this->assertEquals($pdoProfile->getProfileOauthToken(), $profile->getProfileOauthToken());
+		$this->assertEquals($pdoProfile->getProfileUsername(), $profile->getProfileUsername());
+	}
 }
