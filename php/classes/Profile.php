@@ -251,11 +251,11 @@ class Profile implements \JsonSerializable {
 	 * @throws \TypeError when a variable are not the correct data type
 	 **/
 	public static function getProfileByProfileUsername(\PDO $pdo, string $profileUsername) : ?Profile {
-		// sanitize the tweetId before searching
-		try {
-			$profileUsername = self::validateUuid($profileUsername);
-		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
-			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		// sanitize the description before searching
+		$profileUsername = trim($profileUsername);
+		$profileUsername = filter_var($profileUsername, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if(empty($profileUsername) === true) {
+			throw(new \PDOException("tweet content is invalid"));
 		}
 		// create query template
 		$query = "SELECT profileId, profileImage, profileOauthToken, profileUsername FROM profile WHERE profileUsername = :profileUsername";
@@ -290,10 +290,11 @@ class Profile implements \JsonSerializable {
 	 **/
 	public static function getProfileByProfileOauthToken(\PDO $pdo, string $profileOauthToken) : ?Profile {
 		// sanitize the tweetId before searching
-		try {
-			$profileOauthToken = self::validateUuid($profileOauthToken);
-		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
-			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		// sanitize the description before searching
+		$profileOauthToken = trim($profileOauthToken);
+		$profileOauthToken = filter_var($profileOauthToken, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+		if(empty($profileOauthToken) === true) {
+			throw(new \PDOException("tweet content is invalid"));
 		}
 		// create query template
 		$query = "SELECT profileId, profileImage, profileOauthToken, profileUsername FROM profile WHERE profileOauthToken = :profileOauthToken";
@@ -317,7 +318,13 @@ class Profile implements \JsonSerializable {
 	}
 
 
+	/**
+	 * format the state variables for JSON serialization
+	 *
+	 * @return array resulting state variables to serialize
+	 */
 	public function jsonSerialize() {
-		// TODO: Implement jsonSerialize() method.
+		$fields = get_object_vars($this);
+		$fields["profileId"] = $this->profileId->toString();
 	}
 }
