@@ -188,6 +188,98 @@ class Profile implements \JsonSerializable {
 		$this->profileUsername = $newProfileUsername;
 	}
 
+	/**
+	 * inserts this Profile into mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 **/
+	public function insert(\PDO $pdo): void {
+		// create query template
+		$query = "INSERT INTO profile(profileId, profileImage, profileOauthToken, profileUsername) VALUES (:profileId, :profileImage, :profileOauthToken, :profileUsername)";
+		$statement = $pdo->prepare($query);
+		$parameters = ["profileId" => $this->profileId->getBytes(), "profileImage" => $this->profileImage, "profileOauthToken" => $this->profileOauthToken, "profileUsername" => $this->profileUsername];
+		$statement->execute($parameters);
+	}
+
+	/**
+	 * gets the profile by profileId
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param string $profileId tweet id to search for
+	 * @return Profile|null Tweet found or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when a variable are not the correct data type
+	 **/
+	public static function getProfileByProfileId(\PDO $pdo, string $profileId) : ?Profile {
+		// sanitize the tweetId before searching
+		try {
+			$profileId = self::validateUuid($profileId);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		// create query template
+		$query = "SELECT profileId, profileImage, profileOauthToken, profileUsername FROM profile WHERE profileId = :profileId";
+		$statement = $pdo->prepare($query);
+		// bind the tweet id to the place holder in the template
+		$parameters = ["profileId" => $profileId->getBytes()];
+		$statement->execute($parameters);
+		// grab the tweet from mySQL
+		try {
+			$profile = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$profile = new Profile($row["profileId"], $row["profileImage"], $row["profileOauthToken"], $row["profileUsername"]);
+			}
+		} catch(\Exception $exception) {
+			// if the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return($profile);
+	}
+
+
+	/**
+	 * gets the profile by profileUsername
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param string $profileUsername tweet id to search for
+	 * @return Profile|null Tweet found or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when a variable are not the correct data type
+	 **/
+	public static function getProfileByProfileUsername(\PDO $pdo, string $profileUsername) : ?Profile {
+		// sanitize the tweetId before searching
+		try {
+			$profileUsername = self::validateUuid($profileUsername);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		// create query template
+		$query = "SELECT profileId, profileImage, profileOauthToken, profileUsername FROM profile WHERE profileUsername = :profileUsername";
+		$statement = $pdo->prepare($query);
+		// bind the tweet id to the place holder in the template
+		$parameters = ["profileUsername" => $profileUsername];
+		$statement->execute($parameters);
+		// grab the tweet from mySQL
+		try {
+			$profile = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$profile = new Profile($row["profileId"], $row["profileImage"], $row["profileOauthToken"], $row["profileUsername"]);
+			}
+		} catch(\Exception $exception) {
+			// if the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return($profile);
+	}
+
+
+
 
 
 
