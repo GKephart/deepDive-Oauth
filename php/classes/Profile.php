@@ -92,6 +92,108 @@ class Profile implements \JsonSerializable {
 		$this->profileId = $uuid;
 	}
 
+	/**
+	 * accessor method for profileImage
+	 * @return string profileImage
+	 */
+	public function getProfileImage() {
+		return $this->profileImage;
+	}
+
+	/**
+	 * mutator method for profile image
+	 * @param string $newProfileImage
+	 * @throws \InvalidArgumentException if $newProfileImage is not a string or is insecure
+	 * @throws \RangeException if $newProfileImage > 128 characters
+	 * @throws \TypeError if $newProfileImage is not a string
+	 */
+	public function setProfileImage($newProfileImage) {
+
+		// verify the name is secure
+		$newProfileImage = trim($newProfileImage);
+		$newProfileImage = filter_var($newProfileImage, FILTER_SANITIZE_STRING);
+		// make sure name is not empty
+		if(empty($newProfileImage === true)) {
+			throw(new \InvalidArgumentException("name is empty or insecure"));
+		}
+		// verify name will fit into database
+		if(strlen($newProfileImage) > 128) {
+			throw(new \RangeException("name is too long"));
+		}
+		// store profile name
+		$this->profileImage = $newProfileImage;
+	}
+
+	/**
+	 * accessor method for profile OAuth Token
+	 * @return string $profileOauthToken the token used for the handshake with github
+	 */
+	public function getProfileOauthToken() {
+		return $this->profileOauthToken;
+	}
+
+	/**
+	 * mutator method for profile image
+	 * @param string $newProfileOauthToken
+	 * @throws \InvalidArgumentException if $newProfileOauthToken is not a string or is insecure
+	 * @throws \RangeException if $newProfileOauthToken > 64 characters
+	 * @throws \TypeError if $newProfileImage is not a string
+	 */
+	public function setProfileOauthToken($newProfileOauthToken) {
+
+		// verify the name is secure
+		$newProfileOauthToken = trim($newProfileOauthToken);
+		$newProfileOauthToken = filter_var($newProfileOauthToken, FILTER_SANITIZE_STRING);
+		// make sure name is not empty
+		if(empty($newProfileOauthToken === true)) {
+			throw(new \InvalidArgumentException("name is empty or insecure"));
+		}
+		// verify name will fit into database
+		if(strlen($newProfileOauthToken) > 64) {
+			throw(new \RangeException("name is too long"));
+		}
+		// store profile name
+		$this->profileOauthToken = $newProfileOauthToken;
+	}
+
+	/**
+	 * accessor method for Profile Username
+	 * @return string $profileUserName the name of the user
+	 */
+	public function getProfileUsername() {
+		return $this->profileUsername;
+	}
+
+	/**
+	 * mutator method for profile username
+	 * @param string $newProfileUsername
+	 * @throws \InvalidArgumentException if $newProfileUsername is insecure
+	 * @throws \RangeException if $newProfileUsername > 32 characters
+	 * @throws \TypeError if $newProfile usernname is not a string
+	 */
+	public function setProfileUsername($newProfileUsername) {
+
+		// verify the name is secure
+		$newProfileUsername = trim($newProfileUsername);
+		$newProfileUsername = filter_var($newProfileUsername, FILTER_SANITIZE_STRING);
+		// make sure name is not empty
+		if(empty($newProfileUsername === true)) {
+			throw(new \InvalidArgumentException("name is empty or insecure"));
+		}
+		// verify name will fit into database
+		if(strlen($newProfileUsername) > 32) {
+			throw(new \RangeException("name is too long"));
+		}
+		// store profile name
+		$this->profileUsername = $newProfileUsername;
+	}
+
+
+
+
+
+
+
 
 
 
