@@ -1,0 +1,8 @@
+{
+  "require": {
+    "adoy/oauth2": "@stable",
+    "phpunit/dbunit": "@stable",
+    "phpunit/phpunit": "@stable",
+    "ramsey/uuid": "@stable"
+  }
+}
