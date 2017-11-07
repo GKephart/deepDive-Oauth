@@ -279,15 +279,42 @@ class Profile implements \JsonSerializable {
 	}
 
 
-
-
-
-
-
-
-
-
-
+	/**
+	 * gets the profile by the profile Oauth token
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param string $profileOauthToken tweet id to search for
+	 * @return Profile|null Tweet found or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when a variable are not the correct data type
+	 **/
+	public static function getProfileByProfileOauthToken(\PDO $pdo, string $profileOauthToken) : ?Profile {
+		// sanitize the tweetId before searching
+		try {
+			$profileOauthToken = self::validateUuid($profileOauthToken);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		// create query template
+		$query = "SELECT profileId, profileImage, profileOauthToken, profileUsername FROM profile WHERE profileOauthToken = :profileOauthToken";
+		$statement = $pdo->prepare($query);
+		// bind the tweet id to the place holder in the template
+		$parameters = ["profileId" => $profileOauthToken];
+		$statement->execute($parameters);
+		// grab the tweet from mySQL
+		try {
+			$profile = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$profile = new Profile($row["profileId"], $row["profileImage"], $row["profileOauthToken"], $row["profileUsername"]);
+			}
+		} catch(\Exception $exception) {
+			// if the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return($profile);
+	}
 
 
 	public function jsonSerialize() {
