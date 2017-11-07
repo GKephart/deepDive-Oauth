@@ -1,5 +1,5 @@
 <?php
-namespace Edu\Cnm\DataDesign\Test;
+namespace Edu\Cnm\DeepDiveOauth\Test;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\DbUnit\TestCaseTrait;
 use PHPUnit\DbUnit\DataSet\QueryDataSet;
