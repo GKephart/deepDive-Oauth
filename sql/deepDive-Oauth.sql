@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS profile;
+
 CREATE TABLE profile (
 	-- this creates the attribute for the primary key
 	-- auto_increment tells mySQL to number them {1, 2, 3, ...}
