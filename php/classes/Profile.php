@@ -57,6 +57,7 @@ class Profile implements \JsonSerializable {
 			$this->setProfileImage($newProfileImage);
 			$this->setProfileOauthToken($newProfileOauthToken);
 			$this->setProfileImage($newProfileUsername);
+			$this->setProfileUsername($newProfileUsername);
 
 		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
 			//determine what exception type was thrown
@@ -113,9 +114,10 @@ class Profile implements \JsonSerializable {
 		$newProfileImage = trim($newProfileImage);
 		$newProfileImage = filter_var($newProfileImage, FILTER_SANITIZE_STRING);
 		// make sure name is not empty
-		if(empty($newProfileImage === true)) {
+		if(empty($newProfileImage) === true) {
 			throw(new \InvalidArgumentException("name is empty or insecure"));
 		}
+
 		// verify name will fit into database
 		if(strlen($newProfileImage) > 128) {
 			throw(new \RangeException("name is too long"));
@@ -145,7 +147,7 @@ class Profile implements \JsonSerializable {
 		$newProfileOauthToken = trim($newProfileOauthToken);
 		$newProfileOauthToken = filter_var($newProfileOauthToken, FILTER_SANITIZE_STRING);
 		// make sure name is not empty
-		if(empty($newProfileOauthToken === true)) {
+		if(empty($newProfileOauthToken) === true) {
 			throw(new \InvalidArgumentException("name is empty or insecure"));
 		}
 		// verify name will fit into database
@@ -177,7 +179,7 @@ class Profile implements \JsonSerializable {
 		$newProfileUsername = trim($newProfileUsername);
 		$newProfileUsername = filter_var($newProfileUsername, FILTER_SANITIZE_STRING);
 		// make sure name is not empty
-		if(empty($newProfileUsername === true)) {
+		if(empty($newProfileUsername ) === true) {
 			throw(new \InvalidArgumentException("name is empty or insecure"));
 		}
 		// verify name will fit into database
@@ -197,9 +199,11 @@ class Profile implements \JsonSerializable {
 	 **/
 	public function insert(\PDO $pdo): void {
 		// create query template
+
 		$query = "INSERT INTO profile(profileId, profileImage, profileOauthToken, profileUsername) VALUES (:profileId, :profileImage, :profileOauthToken, :profileUsername)";
 		$statement = $pdo->prepare($query);
 		$parameters = ["profileId" => $this->profileId->getBytes(), "profileImage" => $this->profileImage, "profileOauthToken" => $this->profileOauthToken, "profileUsername" => $this->profileUsername];
+		//var_dump($parameters);
 		$statement->execute($parameters);
 	}
 
@@ -300,7 +304,7 @@ class Profile implements \JsonSerializable {
 		$query = "SELECT profileId, profileImage, profileOauthToken, profileUsername FROM profile WHERE profileOauthToken = :profileOauthToken";
 		$statement = $pdo->prepare($query);
 		// bind the tweet id to the place holder in the template
-		$parameters = ["profileId" => $profileOauthToken];
+		$parameters = ["profileOauthToken" => $profileOauthToken];
 		$statement->execute($parameters);
 		// grab the tweet from mySQL
 		try {

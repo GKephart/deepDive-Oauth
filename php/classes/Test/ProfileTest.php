@@ -28,7 +28,7 @@ class ProfileTest extends DeepDiveOauthTest {
 	public function setUp() {
 	parent::setUp();
 
-	$this->profileOauthToken = bin2hex(random_bytes(48));
+	$this->profileOauthToken = bin2hex(random_bytes(27));
 	}
 
 	public function testInsertValidProfile() {
@@ -36,11 +36,11 @@ class ProfileTest extends DeepDiveOauthTest {
 
 
 		$profileId = generateUuidV4();
-		$profile = new Profile($profileId, $this->profileImage, $this->profileOauthToken, $this->profileUsername);
+		$profile = new Profile($profileId, "hello world", $this->profileOauthToken, "hello shity head");
 		$profile->insert($this->getPDO());
 
 		$pdoProfile = Profile::getProfileByProfileId($this->getPDO(), $profileId);
-		$this->assertEquals($numRows + 1, $this->getConnection()->getRowCount("tweet"));
+		$this->assertEquals($numRows + 1, $this->getConnection()->getRowCount("profile"));
 	$this->assertEquals($pdoProfile->getProfileId(), $profileId);
 		$this->assertEquals($pdoProfile->getProfileImage(), $profile->getProfileImage());
 		$this->assertEquals($pdoProfile->getProfileOauthToken(), $profile->getProfileOauthToken());
@@ -56,7 +56,7 @@ class ProfileTest extends DeepDiveOauthTest {
 		$profile->insert($this->getPDO());
 
 		$pdoProfile = Profile::getProfileByProfileOauthToken($this->getPDO(), $profile->getProfileOauthToken());
-		$this->assertEquals($numRows + 1, $this->getConnection()->getRowCount("tweet"));
+		$this->assertEquals($numRows + 1, $this->getConnection()->getRowCount("profile"));
 		$this->assertEquals($pdoProfile->getProfileId(), $profileId);
 		$this->assertEquals($pdoProfile->getProfileImage(), $profile->getProfileImage());
 		$this->assertEquals($pdoProfile->getProfileOauthToken(), $profile->getProfileOauthToken());
@@ -71,7 +71,7 @@ class ProfileTest extends DeepDiveOauthTest {
 		$profile->insert($this->getPDO());
 
 		$pdoProfile = Profile::getProfileByProfileUsername($this->getPDO(), $profile->getProfileUsername());
-		$this->assertEquals($numRows + 1, $this->getConnection()->getRowCount("tweet"));
+		$this->assertEquals($numRows + 1, $this->getConnection()->getRowCount("profile"));
 		$this->assertEquals($pdoProfile->getProfileId(), $profileId);
 		$this->assertEquals($pdoProfile->getProfileImage(), $profile->getProfileImage());
 		$this->assertEquals($pdoProfile->getProfileOauthToken(), $profile->getProfileOauthToken());
